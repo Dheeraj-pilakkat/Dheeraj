@@ -137,8 +137,8 @@ export default function Hero() {
       scrollTl.fromTo(
         orangeScreenRef.current,
         {
-          xPercent: 80,
-          yPercent: -80,
+          xPercent: 100,
+          yPercent: -100,
           opacity: 0.15,
         },
         {
@@ -324,7 +324,7 @@ export default function Hero() {
       {/* Sticky/Pinned full screen viewport */}
       <div
         ref={stickyRef}
-        className="sticky top-0 h-screen w-full flex flex-col justify-between px-4 py-12 md:px-8 md:py-16 select-none overflow-hidden"
+        className="sticky top-0 h-screen h-[100dvh] w-full flex flex-col justify-between px-4 py-12 md:px-8 md:py-16 select-none overflow-hidden"
       >
         {/* Background Image & Orange Overlay sliding in from bottom right */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -345,18 +345,18 @@ export default function Hero() {
         {/* Header Name & Live Status */}
         <div
           ref={brandRef}
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full z-20"
+          className="flex flex-row items-center justify-between gap-2 w-full z-20"
         >
-          <span className="text-2xl md:text-3xl font-serif tracking-tight text-white font-medium hover:text-accent transition-colors duration-300">
+          <span className="text-xl sm:text-2xl md:text-3xl font-serif tracking-tight text-white font-medium hover:text-accent transition-colors duration-300">
             {portfolioContent.hero.name}
           </span>
 
-          <div className="flex items-center gap-2.5 px-4 py-2 rounded-full border border-white/5 bg-white/[0.02] w-fit">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/5 bg-white/[0.02] w-fit">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span className="text-[10px] tracking-wider uppercase font-mono text-zinc-200">
+            <span className="text-[9px] sm:text-[10px] tracking-wider uppercase font-mono text-zinc-200">
               {portfolioContent.hero.availability}
             </span>
           </div>
@@ -464,14 +464,14 @@ export default function Hero() {
         {/* Prominent Orange Full-Stack Engineer text to attract attention */}
         <div
           ref={engineerContainerRef}
-          className="engineer-lens-container absolute bottom-24 right-4 md:right-12 z-20 text-right cursor-none py-4 px-2"
+          className="engineer-lens-container absolute bottom-24 right-4 md:right-12 z-20 text-right md:cursor-none py-4 px-2"
         >
           {/* Standard Text Layer */}
           <div ref={engineerStandardTextRef} className="flex flex-col items-end">
             <span className="text-xs md:text-sm font-mono tracking-[0.3em] text-[#FF5A00] uppercase font-black block mb-2">
               Specialization
             </span>
-            <h2 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-black italic text-[#FF5A00] tracking-tight drop-shadow-[0_0_35px_rgba(255,90,0,0.45)] leading-none whitespace-nowrap">
+            <h2 className="text-2xl xs:text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-black italic text-[#FF5A00] tracking-tight drop-shadow-[0_0_35px_rgba(255,90,0,0.45)] leading-none whitespace-nowrap">
               Full-Stack Engineer
             </h2>
           </div>
@@ -479,12 +479,12 @@ export default function Hero() {
           {/* Secret Text Layer (revealed via clip-path) */}
           <div
             ref={engineerRevealTextRef}
-            className="absolute top-4 left-0 right-2 flex flex-col items-end select-none pointer-events-none transition-opacity duration-300"
+            className="absolute top-4 left-0 right-2 hidden md:flex flex-col items-end select-none pointer-events-none transition-opacity duration-300"
           >
             <span className="text-xs md:text-sm font-mono tracking-[0.3em] text-white uppercase font-black block mb-2">
               Specialization
             </span>
-            <h2 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-black italic text-white tracking-tight drop-shadow-[0_0_35px_rgba(255,255,255,0.45)] leading-none whitespace-nowrap">
+            <h2 className="text-2xl xs:text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-black italic text-white tracking-tight drop-shadow-[0_0_35px_rgba(255,255,255,0.45)] leading-none whitespace-nowrap">
               Systems Architect
             </h2>
           </div>
@@ -499,9 +499,9 @@ export default function Hero() {
         {/* Footer Scroll Indicator */}
         <div
           ref={scrollCueRef}
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 w-full text-zinc-200 text-xs font-mono tracking-widest uppercase border-t border-white/5 pt-8 z-20"
+          className="flex flex-col items-center sm:flex-row sm:items-center justify-center sm:justify-between gap-4 sm:gap-6 w-full text-zinc-200 text-xs font-mono tracking-widest uppercase border-t border-white/5 pt-8 z-20"
         >
-          <span className="font-light">Full-Stack Engineer</span>
+          <span className="font-light hidden sm:inline">Full-Stack Engineer</span>
 
           {/* Scroll cue with status indicators */}
           <div className="flex items-center gap-3">
@@ -511,7 +511,7 @@ export default function Hero() {
             </div>
           </div>
 
-          <span className="font-light">Based remote / Worldwide</span>
+          <span className="font-light hidden sm:inline">Based remote / Worldwide</span>
         </div>
       </div>
     </div>

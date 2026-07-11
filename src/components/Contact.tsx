@@ -371,10 +371,10 @@ export default function Contact() {
           <div className="lg:col-span-6 flex flex-col items-start lg:items-end justify-center contact-reveal">
             <a
               href={`mailto:${portfolioContent.contact.email}`}
-              className="group relative text-2xl md:text-4xl lg:text-5xl font-serif text-zinc-200 hover:text-accent transition-colors duration-300 pb-2 flex items-center gap-2"
+              className="group relative text-xl sm:text-2xl md:text-4xl lg:text-5xl font-serif text-zinc-200 hover:text-accent transition-colors duration-300 pb-2 flex items-center gap-2 flex-wrap break-all"
             >
               <span>{portfolioContent.contact.email}</span>
-              <ArrowUpRight className="h-6 w-6 md:h-8 md:w-8 text-zinc-500 group-hover:text-accent group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300" />
+              <ArrowUpRight className="h-6 w-6 md:h-8 md:w-8 text-zinc-500 group-hover:text-accent group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300 shrink-0" />
               
               {/* Elegant Hover Underline Line */}
               <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/20 origin-left scale-x-0 group-hover:scale-x-100 group-hover:bg-accent/60 transition-transform duration-500 ease-out" />

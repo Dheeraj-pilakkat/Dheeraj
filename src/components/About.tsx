@@ -183,7 +183,7 @@ export default function About() {
           {/* Biography Text (7cols) */}
           <div
             ref={bioContainerRef}
-            className="lens-hover-container relative lg:col-span-7 flex flex-col justify-center cursor-none py-4"
+            className="lens-hover-container relative lg:col-span-7 flex flex-col justify-center md:cursor-none py-4"
           >
             {/* Standard Bio Text Layer */}
             <div ref={standardTextRef} className="flex flex-col gap-4 md:gap-6">
@@ -200,7 +200,7 @@ export default function About() {
             {/* Secret Bio Text Layer (revealed via magnifying lens clip-path) */}
             <div
               ref={revealTextRef}
-              className="absolute top-4 left-0 right-0 flex flex-col gap-4 md:gap-6 select-none pointer-events-none transition-opacity duration-300"
+              className="absolute top-4 left-0 right-0 hidden md:flex flex-col gap-4 md:gap-6 select-none pointer-events-none transition-opacity duration-300"
             >
               {secretBio.map((para, index) => (
                 <p

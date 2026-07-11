@@ -83,8 +83,8 @@ export const portfolioContent: PortfolioContent = {
       title: "RoadmapAI",
       description: "Generative knowledge graphs mapped to professional engineering paths.",
       tags: ["Next.js", "FastAPI", "OpenAI", "PostgreSQL"],
-      image: "https://picsum.photos/seed/roadmapai/1200/800",
-      link: "#",
+      image: "/roadmapai.png",
+      link: "https://roadmapai-three.vercel.app/",
       year: "2025",
     },
     {
@@ -92,8 +92,8 @@ export const portfolioContent: PortfolioContent = {
       title: "Lumin Eye-Care",
       description: "Premium practice portal with direct booking pipelines and client records.",
       tags: ["React", "Express", "Tailwind CSS", "MongoDB"],
-      image: "https://picsum.photos/seed/lumineyecare/1200/800",
-      link: "#",
+      image: "/lumineye.png",
+      link: "https://lumineye.vercel.app/",
       year: "2024",
     },
     {
