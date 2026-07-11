@@ -85,7 +85,7 @@ export const portfolioContent: PortfolioContent = {
       tags: ["Next.js", "FastAPI", "OpenAI", "PostgreSQL"],
       image: "/roadmapai.png",
       link: "https://roadmapai-three.vercel.app/",
-      year: "2025",
+      year: "2026",
     },
     {
       id: "lumin-eyecare",
@@ -94,17 +94,17 @@ export const portfolioContent: PortfolioContent = {
       tags: ["React", "Express", "Tailwind CSS", "MongoDB"],
       image: "/lumineye.png",
       link: "https://lumineye.vercel.app/",
-      year: "2024",
+      year: "2026",
     },
-    {
-      id: "hyper-cache",
-      title: "HyperCache API",
-      description: "Ultra-low latency key-value middleware designed for Next.js Edge runtimes.",
-      tags: ["TypeScript", "Redis", "Cloudflare Workers"],
-      image: "https://picsum.photos/seed/hypercache/1200/800",
-      link: "#",
-      year: "2024",
-    },
+    // {
+    //   id: "hyper-cache",
+    //   title: "HyperCache API",
+    //   description: "Ultra-low latency key-value middleware designed for Next.js Edge runtimes.",
+    //   tags: ["TypeScript", "Redis", "Cloudflare Workers"],
+    //   image: "https://picsum.photos/seed/hypercache/1200/800",
+    //   link: "#",
+    //   year: "2024",
+    // },
   ],
   capabilities: [
     {
