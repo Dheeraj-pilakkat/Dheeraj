@@ -29,7 +29,6 @@ export default function About() {
     if (prefersReduced) return;
 
     const ctx = gsap.context(() => {
-      // Bio paragraph staggered slide reveals
       gsap.fromTo(
         ".bio-text-para",
         { opacity: 0, y: 30 },
@@ -46,14 +45,13 @@ export default function About() {
         }
       );
 
-      // Portrait Image parallax scale
       if (imageRef.current && imageContainerRef.current) {
         gsap.fromTo(
           imageRef.current,
-          { scale: 1.2, yPercent: -10 },
+          { scale: 1.15, yPercent: -8 },
           {
             scale: 1.02,
-            yPercent: 10,
+            yPercent: 8,
             ease: "none",
             scrollTrigger: {
               trigger: imageContainerRef.current,
@@ -66,7 +64,6 @@ export default function About() {
       }
     }, containerRef);
 
-    // Mouse-following magnifying glass logic (desktop only)
     const isTouch = window.matchMedia("(pointer: coarse)").matches;
     let removeMouseListeners: (() => void) | undefined;
 
@@ -90,11 +87,9 @@ export default function About() {
             overwrite: "auto",
           });
 
-          // Reveal secret text inside the lens
           revealText.style.clipPath = `circle(80px at ${x}px ${y}px)`;
           revealText.style.setProperty("-webkit-clip-path", `circle(80px at ${x}px ${y}px)`);
 
-          // Hide standard text inside the lens
           standardText.style.setProperty("mask-image", `radial-gradient(circle 80px at ${x}px ${y}px, transparent 80px, black 81px)`);
           standardText.style.setProperty("-webkit-mask-image", `radial-gradient(circle 80px at ${x}px ${y}px, transparent 80px, black 81px)`);
         };
@@ -131,7 +126,6 @@ export default function About() {
         container.addEventListener("mouseenter", onMouseEnter);
         container.addEventListener("mouseleave", onMouseLeave);
 
-        // Initial state
         gsap.set(lensRing, { scale: 0, opacity: 0 });
         revealText.style.clipPath = `circle(0px at 0px 0px)`;
         revealText.style.setProperty("-webkit-clip-path", "circle(0px at 0px 0px)");
@@ -153,79 +147,93 @@ export default function About() {
   }, []);
 
   return (
-    <section id="about" ref={containerRef} className="py-10 md:py-16 w-full overflow-hidden">
+    <section
+      id="about"
+      aria-label="About Profile"
+      ref={containerRef}
+      className="py-16 md:py-24 w-full bg-white border-t border-slate-200/80 overflow-hidden"
+    >
       <div className="max-w-7xl mx-auto px-6 md:px-16 w-full">
         <SectionHeading
           number="04 // Profile"
-          title="About Dheeraj"
-          subtitle="A perspective on software development, user interface design, and architectural clarity."
+          heading="About Dheeraj"
+          subtitle="A perspective on software engineering, user interface design, and architectural clarity."
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          {/* Portrait Image (4cols) */}
-          <div className="lg:col-span-5 w-full">
+          <div className="lg:col-span-5 w-full flex flex-col gap-6">
             <div
               ref={imageContainerRef}
-              className="relative aspect-4/5 w-full max-w-sm mx-auto overflow-hidden rounded-2xl border border-white/5 bg-zinc-900"
+              className="relative aspect-4/5 w-full max-w-sm mx-auto overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-md"
             >
               <Image
                 ref={imageRef}
                 src={portfolioContent.about.portraitImage}
-                alt="Dheeraj Portrait"
+                alt="Portrait of Dheeraj, Full-Stack Developer"
                 fill
                 sizes="(max-width: 768px) 100vw, 30vw"
-                className="object-cover hover:scale-115 scale-100 hover:rotate-2 transition-transform  will-change-transform grayscale hover:grayscale-0  duration-700"
+                className="object-cover transition-transform duration-700 select-none filter contrast-[1.02] hover:scale-105"
                 loading="lazy"
               />
             </div>
+
+            <div className="grid grid-cols-3 gap-3 max-w-sm mx-auto w-full">
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-center">
+                <span className="block text-xl font-serif font-bold text-slate-900">4+</span>
+                <span className="text-[10px] font-mono text-slate-500 uppercase">Live Products</span>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-center">
+                <span className="block text-xl font-serif font-bold text-slate-900">100%</span>
+                <span className="text-[10px] font-mono text-slate-500 uppercase">TypeScript</span>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-center">
+                <span className="block text-xl font-serif font-bold text-slate-900">60FPS</span>
+                <span className="text-[10px] font-mono text-slate-500 uppercase">GSAP Motion</span>
+              </div>
+            </div>
           </div>
 
-          {/* Biography Text (7cols) */}
           <div
             ref={bioContainerRef}
             className="lens-hover-container relative lg:col-span-7 flex flex-col justify-center md:cursor-none py-4"
           >
-            {/* Standard Bio Text Layer */}
-            <div ref={standardTextRef} className="flex flex-col gap-4 md:gap-6">
+            <div ref={standardTextRef} className="flex flex-col gap-5 md:gap-6">
               {portfolioContent.about.bio.map((para, index) => (
                 <p
                   key={index}
-                  className="bio-text-para text-base md:text-lg font-light leading-relaxed text-zinc-400 font-sans tracking-wide"
+                  className="bio-text-para text-base md:text-lg font-light leading-relaxed text-slate-700 font-sans tracking-wide"
                 >
                   {para}
                 </p>
               ))}
             </div>
 
-            {/* Secret Bio Text Layer (revealed via magnifying lens clip-path) */}
             <div
               ref={revealTextRef}
-              className="absolute top-4 left-0 right-0 hidden md:flex flex-col gap-4 md:gap-6 select-none pointer-events-none transition-opacity duration-300"
+              className="absolute top-4 left-0 right-0 hidden md:flex flex-col gap-5 md:gap-6 select-none pointer-events-none transition-opacity duration-300"
             >
               {secretBio.map((para, index) => (
                 <p
                   key={index}
-                  className="text-base md:text-lg font-light leading-relaxed text-accent font-sans tracking-wide font-medium"
+                  className="text-base md:text-lg leading-relaxed text-indigo-600 font-sans tracking-wide font-medium"
                 >
                   {para}
                 </p>
               ))}
             </div>
 
-            {/* Magnifying Glass Lens Ring */}
             <div
               ref={lensRingRef}
-              className="hidden md:block pointer-events-none absolute h-[160px] w-[160px] -ml-[80px] -mt-[80px] rounded-full border border-accent bg-[#FF5A00]/5 backdrop-blur-[1px] shadow-[0_0_25px_rgba(255,90,0,0.18),inset_0_0_20px_rgba(255,90,0,0.12)] z-10"
+              className="hidden md:block pointer-events-none absolute h-[160px] w-[160px] -ml-[80px] -mt-[80px] rounded-full border border-indigo-600 bg-indigo-500/10 backdrop-blur-[1px] shadow-[0_0_25px_rgba(79,70,229,0.2),inset_0_0_20px_rgba(79,70,229,0.15)] z-10"
             />
           </div>
         </div>
       </div>
 
-      {/* Tech Stack Marquee (Full-Width) */}
-      <div className="mt-12 md:mt-16">
-        <div className="max-w-7xl mx-auto px-6 md:px-16 mb-8">
-          <span className="text-[10px] font-mono tracking-widest uppercase text-accent">
-            Expertise Ecosystem
+      <div className="mt-16 md:mt-20">
+        <div className="max-w-7xl mx-auto px-6 md:px-16 mb-6">
+          <span className="text-[11px] font-mono tracking-widest uppercase text-indigo-600 font-semibold">
+            Engineering Stack & Tech Ecosystem
           </span>
         </div>
         <Marquee items={portfolioContent.about.techStack} speed={30} />

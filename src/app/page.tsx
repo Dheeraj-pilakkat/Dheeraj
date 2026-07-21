@@ -9,7 +9,10 @@ import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <main className="flex flex-col min-h-screen bg-[#0a0a0a] text-zinc-100 overflow-x-hidden">
+    <main id="main-content" className="flex flex-col min-h-screen bg-[#FAFAFA] text-slate-900 overflow-x-hidden">
+      {/* Primary Accessible Page Heading */}
+      <h1 className="sr-only">Dheeraj Dev — Full-Stack Software Engineer & Systems Architect</h1>
+
       {/* Hero section */}
       <Hero />
 

@@ -9,7 +9,6 @@ export default function Cursor() {
     const cursor = cursorRef.current;
     if (!cursor) return;
 
-    // Detect touch device or reduced motion
     const isTouch = window.matchMedia("(pointer: coarse)").matches;
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -18,28 +17,24 @@ export default function Cursor() {
       return;
     }
 
-    // Set initial position out of view
-    gsap.set(cursor, { x: -100, y: -100 });
+    // Set initial offscreen position
+    gsap.set(cursor, { x: -100, y: -100, force3D: true });
 
-    const xSetter = gsap.quickSetter(cursor, "x", "px");
-    const ySetter = gsap.quickSetter(cursor, "y", "px");
-
-    let mouseX = 0;
-    let mouseY = 0;
+    // High performance quickTo with snappy 0.08s lerp for instant responsive tracking
+    const xTo = gsap.quickTo(cursor, "x", { duration: 0.08, ease: "power2.out" });
+    const yTo = gsap.quickTo(cursor, "y", { duration: 0.08, ease: "power2.out" });
 
     const onMouseMove = (e: MouseEvent) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      xSetter(mouseX);
-      ySetter(mouseY);
+      xTo(e.clientX);
+      yTo(e.clientY);
     };
 
-    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
 
     const onMouseEnterLink = (e: Event) => {
       const target = e.currentTarget as HTMLElement;
       const isProjectCard = target.classList.contains("project-card-interactive");
-      const isLens = target.classList.contains("lens-hover-container") || target.classList.contains("engineer-lens-container");
+      const isLens = target.classList.contains("lens-hover-container");
       
       if (isLens) {
         gsap.to(cursor, {
@@ -52,10 +47,10 @@ export default function Cursor() {
       }
 
       gsap.to(cursor, {
-        scale: isProjectCard ? 6 : 3.5,
-        backgroundColor: "rgba(255, 90, 0, 0.15)", // Warm orange translucent
-        border: "1px solid rgba(255, 90, 0, 0.6)",
-        duration: 0.3,
+        scale: isProjectCard ? 4 : 2.5,
+        backgroundColor: "rgba(79, 70, 229, 0.12)",
+        border: "1.5px solid rgba(79, 70, 229, 0.6)",
+        duration: 0.2,
         ease: "power2.out",
         overwrite: "auto",
       });
@@ -63,11 +58,11 @@ export default function Cursor() {
 
     const onMouseLeaveLink = () => {
       gsap.to(cursor, {
-        scale: 2,
+        scale: 1,
         opacity: 1,
-        backgroundColor: "#FF5A00", // Solid warm orange
+        backgroundColor: "#4F46E5",
         border: "1px solid transparent",
-        duration: 0.3,
+        duration: 0.2,
         ease: "power2.out",
         overwrite: "auto",
       });
@@ -75,7 +70,7 @@ export default function Cursor() {
 
     const attachListeners = () => {
       const interactiveElements = document.querySelectorAll(
-        "a, button, [role='button'], .project-card-interactive, .magnetic-hover, .lens-hover-container, .engineer-lens-container"
+        "a, button, [role='button'], .project-card-interactive, .lens-hover-container"
       );
       interactiveElements.forEach((el) => {
         el.removeEventListener("mouseenter", onMouseEnterLink);
@@ -88,7 +83,6 @@ export default function Cursor() {
 
     attachListeners();
 
-    // Use MutationObserver to handle dynamically rendered elements
     const observer = new MutationObserver(() => {
       attachListeners();
     });
@@ -99,7 +93,7 @@ export default function Cursor() {
       window.removeEventListener("mousemove", onMouseMove);
       observer.disconnect();
       const interactiveElements = document.querySelectorAll(
-        "a, button, [role='button'], .project-card-interactive, .magnetic-hover, .lens-hover-container, .engineer-lens-container"
+        "a, button, [role='button'], .project-card-interactive, .lens-hover-container"
       );
       interactiveElements.forEach((el) => {
         el.removeEventListener("mouseenter", onMouseEnterLink);
@@ -109,11 +103,9 @@ export default function Cursor() {
   }, []);
 
   return (
-    <>
-      <div
-        ref={cursorRef}
-        className="pointer-events-none fixed top-0 left-1 z-[9999]   h-4 w-4 rounded-full bg-[#FF5A00] mix-blend-screen transition-transform duration-100 ease-out hidden md:block"
-      />
-    </>
+    <div
+      ref={cursorRef}
+      className="pointer-events-none fixed top-0 left-0 z-[9999] h-3 w-3 -ml-1.5 -mt-1.5 rounded-full bg-indigo-600 hidden md:block"
+    />
   );
 }

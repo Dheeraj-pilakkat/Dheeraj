@@ -5,7 +5,7 @@ export interface Project {
   description: string;
   longDescription?: string;
   tags: string[];
-  image: string; // Picsum seed or other URL
+  image: string;
   link: string;
   year: string;
 }
@@ -57,7 +57,7 @@ export interface PortfolioContent {
 export const portfolioContent: PortfolioContent = {
   meta: {
     title: "Dheeraj Dev | Premium Full-Stack Portfolio",
-    description: "Personal portfolio of Dheeraj , building high-performance Next.js applications and robust MERN stack backends with architectural precision and motion design.",
+    description: "Personal portfolio of Dheeraj, building high-performance Next.js applications and robust MERN stack backends with architectural precision and motion design.",
   },
   hero: {
     name: "Dheeraj.Dev",
@@ -82,7 +82,7 @@ export const portfolioContent: PortfolioContent = {
       id: "roadmap-ai",
       title: "RoadmapAI",
       description: "Generative knowledge graphs mapped to professional engineering paths.",
-      tags: ["Next.js", "Claude","Gemini", "Tailwind CSS"],
+      tags: ["Next.js", "Claude", "Gemini", "Tailwind CSS"],
       image: "/roadmapai.png",
       link: "https://roadmapai-three.vercel.app/",
       year: "2026",
@@ -90,7 +90,7 @@ export const portfolioContent: PortfolioContent = {
     {
       id: "lumin-eyecare",
       title: "Lumin Eye-Care",
-      description: "Premium Froentend website for a futuristic eye-care clinic",
+      description: "Premium Frontend website for a futuristic eye-care clinic",
       tags: ["Next.js", "Tailwind CSS"],
       image: "/lumineye.png",
       link: "https://lumineye.vercel.app/",
@@ -115,7 +115,7 @@ export const portfolioContent: PortfolioContent = {
     {
       title: "Full-Stack Product Builds",
       description: "Designing end-to-end applications from database architecture to secure API layers and scalable deployments.",
-      details: ["Node.js / Express servers", "Relational & NoSQL database schemas", "JWT/OAuth security protocols", "TRPC & REST API interfaces"],
+      details: ["Node.js / Express servers", "Relational & NoSQL database schemas", "JWT/OAuth security protocols", "tRPC & REST API interfaces"],
     },
     {
       title: "Performance & DX Tooling",
@@ -147,11 +147,11 @@ export const portfolioContent: PortfolioContent = {
   ],
   about: {
     bio: [
-      "I am Dheeraj , a solo full-stack developer obsessed with the intersection of architecture, user experience, and animation. I spend my time building products that load instantly, feel natural to interact with, and solve real commercial problems.",
+      "I am Dheeraj, a solo full-stack developer obsessed with the intersection of architecture, user experience, and animation. I spend my time building products that load instantly, feel natural to interact with, and solve real commercial problems.",
       "My development philosophy is rooted in architectural restraint and typographer's discipline: clean codebases, rich editorial layouts, and micro-animations that communicate state rather than distract.",
       "Whether collaborating with founders to take an MVP from zero to one or writing specialized tooling to solve engineering bottlenecks, I aim for production-grade reliability and fluid interactive flow.",
     ],
-    portraitImage: "/pic1.jpeg",
+    portraitImage: "/pic.jpg",
     techStack: [
       "React",
       "Next.js",
@@ -175,7 +175,6 @@ export const portfolioContent: PortfolioContent = {
     socials: [
       { name: "GitHub", url: "https://github.com/Dheeraj-pilakkat" },
       { name: "LinkedIn", url: "https://www.linkedin.com/in/dheeraj-pilakkat/" },
-      // { name: "X / Twitter", url: "https://x.com" },
     ],
   },
 };

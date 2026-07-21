@@ -6,24 +6,27 @@ import { portfolioContent } from "@/content";
 
 export default function SelectedWork() {
   return (
-    <section id="work" className="py-10 md:py-16 w-full">
+    <section
+      id="work"
+      aria-label="Selected Projects"
+      className="py-16 md:py-24 w-full bg-[#FAFAFA]"
+    >
       <div className="max-w-7xl mx-auto px-6 md:px-16 w-full">
         <SectionHeading
-          number="01 // Selected Projects"
-          title="Crafted Works"
-          subtitle="A collection of production-grade systems, automated tooling, and custom products built for speed and utility."
+          number="01 // Selected Work"
+          heading="Crafted Systems & Products"
+          subtitle="Production-grade full-stack applications, developer tooling, and modern digital platforms built for speed and reliability."
         />
         
-        {/* Editorial Grid: Asymmetrical spacing for premium agency design */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-12">
+        {/* Asymmetrical Grid Layout for Editorial Polish */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
           {portfolioContent.projects.map((project, index) => {
-            // Asymmetrical top offset on desktop to make layout feel editorial/premium
             const isEven = index % 2 === 0;
             return (
               <div
                 key={project.id}
                 className={`w-full ${
-                  isEven ? "md:translate-y-0" : "md:translate-y-6"
+                  isEven ? "md:translate-y-0" : "md:translate-y-8"
                 }`}
               >
                 <ProjectCard project={project} />

@@ -3,14 +3,19 @@
 @theme {
   --font-serif: var(--font-serif);
   --font-sans: var(--font-sans);
-  --color-accent: #FF5A00;
-  --color-near-black: #0A0A0A;
-  --color-card-bg: #1C1C1C;
+  --color-accent: #4F46E5;
+  --color-accent-light: #6366F1;
+  --color-accent-dark: #3730A3;
+  --color-surface: #FFFFFF;
+  --color-canvas: #FAFAFA;
 }
 
 :root {
-  --background: #0A0A0A;
-  --foreground: #a1a1aa;
+  --background: #FAFAFA;
+  --foreground: #0F172A;
+  --muted-foreground: #475569;
+  --card-bg: #FFFFFF;
+  --border-color: #E2E8F0;
 }
 
 body {
@@ -23,23 +28,29 @@ body {
 
 /* Custom Selection Color */
 ::selection {
-  background-color: rgba(255, 90, 0, 0.25);
-  color: #ffffff;
+  background-color: rgba(79, 70, 229, 0.15);
+  color: #1E1B4B;
 }
 
-/* Scrollbar styling */
+/* Scrollbar styling for Light Theme */
 ::-webkit-scrollbar {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: #F1F5F9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #222;
+  background: #CBD5E1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #333;
+  background: #94A3B8;
+}
+
+/* Subtle Grid Background Pattern */
+.grid-pattern {
+  background-image: radial-gradient(#CBD5E1 1.2px, transparent 1.2px);
+  background-size: 28px 28px;
 }
 
 /* Grain Noise Overlay */
@@ -49,13 +60,13 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.02;
   pointer-events: none;
   z-index: 9999;
 }
 
-/* Lenis smooth scroll adjustments - prevents fighting with browser native scroll */
+/* Lenis smooth scroll adjustments */
 html.lenis,
 html.lenis body {
   height: auto;

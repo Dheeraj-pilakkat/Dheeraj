@@ -5,25 +5,23 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 interface SectionHeadingProps {
   number: string;
-  title: string;
+  heading: string;
   subtitle?: string;
 }
 
-export default function SectionHeading({ number, title, subtitle }: SectionHeadingProps) {
+export default function SectionHeading({ number, heading, subtitle }: SectionHeadingProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
   const numberRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    // Register scroll trigger inside client mount
     gsap.registerPlugin(ScrollTrigger);
 
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) return;
 
     const ctx = gsap.context(() => {
-      // 1. Line width expand
       gsap.fromTo(
         lineRef.current,
         { scaleX: 0, transformOrigin: "left center" },
@@ -39,7 +37,6 @@ export default function SectionHeading({ number, title, subtitle }: SectionHeadi
         }
       );
 
-      // 2. Number reveal
       gsap.fromTo(
         numberRef.current,
         { yPercent: 100, opacity: 0 },
@@ -56,7 +53,6 @@ export default function SectionHeading({ number, title, subtitle }: SectionHeadi
         }
       );
 
-      // 3. Title clip path wipe
       gsap.fromTo(
         textRef.current,
         {
@@ -81,22 +77,22 @@ export default function SectionHeading({ number, title, subtitle }: SectionHeadi
   }, []);
 
   return (
-    <div ref={containerRef} className="w-full mb-10 md:mb-12 overflow-hidden">
-      <div className="flex items-center gap-4 text-xs tracking-[0.2em] uppercase font-mono text-accent mb-3">
-        <span ref={numberRef} className="inline-block select-none">
+    <div ref={containerRef} className="w-full mb-10 md:mb-14 overflow-hidden">
+      <div className="flex items-center gap-4 text-xs tracking-[0.2em] uppercase font-mono text-indigo-600 mb-3">
+        <span ref={numberRef} className="inline-block select-none font-semibold">
           {number}
         </span>
-        <div ref={lineRef} className="h-px grow bg-white/20" />
+        <div ref={lineRef} className="h-px grow bg-slate-200" />
       </div>
       <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-4">
         <h2
           ref={textRef}
-          className="text-4xl md:text-6xl font-serif text-accent tracking-tight font-light will-change-transform"
+          className="text-4xl md:text-6xl font-serif text-slate-900 tracking-tight font-light will-change-transform"
         >
-          {title}
+          {heading}
         </h2>
         {subtitle && (
-          <p className="text-sm font-light text-zinc-400 max-w-xs md:text-right font-sans tracking-wide leading-relaxed">
+          <p className="text-sm md:text-base font-light text-slate-600 max-w-md md:text-right font-sans tracking-wide leading-relaxed">
             {subtitle}
           </p>
         )}

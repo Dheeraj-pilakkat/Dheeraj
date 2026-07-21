@@ -1,519 +1,319 @@
 "use client";
-import React, { useEffect, useRef } from "react";
-import Image from "next/image";
+import React, { useEffect, useRef, useState } from "react";
 import { portfolioContent } from "@/content";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, Code2, CheckCircle2 } from "lucide-react";
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const stickyRef = useRef<HTMLDivElement>(null);
-  const orangeScreenRef = useRef<HTMLDivElement>(null);
   const brandRef = useRef<HTMLDivElement>(null);
-  const slide1Ref = useRef<HTMLDivElement>(null);
-  const slide2Ref = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const terminalRef = useRef<HTMLDivElement>(null);
   const scrollCueRef = useRef<HTMLDivElement>(null);
-  const scrollLabelRef = useRef<HTMLSpanElement>(null);
-  const sentence1Ref = useRef<HTMLParagraphElement>(null);
-  const sentence2Ref = useRef<HTMLParagraphElement>(null);
-  const engineerContainerRef = useRef<HTMLDivElement>(null);
-  const engineerStandardTextRef = useRef<HTMLDivElement>(null);
-  const engineerRevealTextRef = useRef<HTMLDivElement>(null);
-  const engineerLensRingRef = useRef<HTMLDivElement>(null);
+  const scrollCueArrowRef = useRef<HTMLDivElement>(null);
+
+  const [activeTab, setActiveTab] = useState<"arch" | "stack" | "metrics">("arch");
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    // Register scroll trigger inside client mount
     gsap.registerPlugin(ScrollTrigger);
 
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    // A. Reduced Motion Fallback: No pinning, just simple fades
-    if (prefersReduced) {
-      const tl = gsap.timeline();
-      tl.fromTo(brandRef.current, { opacity: 0 }, { opacity: 1, duration: 0.6 });
-      tl.fromTo([slide1Ref.current, slide2Ref.current], { opacity: 0 }, {
-        opacity: 1,
-        stagger: 0.3,
-        duration: 0.8,
-      });
-      tl.fromTo(engineerContainerRef.current, { opacity: 0 }, { opacity: 1, duration: 0.8 }, "-=0.4");
-      const s1Letters = sentence1Ref.current?.querySelectorAll(".reveal-char");
-      const s2Letters = sentence2Ref.current?.querySelectorAll(".reveal-char");
-      if (s1Letters) tl.fromTo(s1Letters, { opacity: 0.15 }, { opacity: 1, duration: 0.6 }, "-=0.6");
-      if (s2Letters) tl.fromTo(s2Letters, { opacity: 0.15 }, { opacity: 1, duration: 0.6 }, "-=0.4");
-      return () => {
-        tl.kill();
-      };
-    }
+    if (prefersReduced) return;
 
     const ctx = gsap.context(() => {
-      // 1. Staggered reveal of Slide 1 on load
-      const initTl = gsap.timeline();
+      const initTl = gsap.timeline({
+        defaults: { ease: "power4.out", force3D: true },
+        onComplete: () => {
+          // Clean up GPU compositor layers post-entrance to ensure 60 FPS smooth cursor tracking
+          if (headlineRef.current) {
+            gsap.set(headlineRef.current.querySelectorAll(".hero-word"), { clearProps: "willChange,transform" });
+          }
+          if (brandRef.current) gsap.set(brandRef.current, { clearProps: "willChange,transform" });
+          if (ctaRef.current) gsap.set(ctaRef.current, { clearProps: "willChange,transform" });
+          if (terminalRef.current) gsap.set(terminalRef.current, { clearProps: "willChange,transform" });
+        },
+      });
+
       initTl.fromTo(
         brandRef.current,
         { opacity: 0, y: -20 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }
+        { opacity: 1, y: 0, duration: 0.9 }
       );
 
-      const initChars = slide1Ref.current?.querySelectorAll(".slide1-char");
-      if (initChars && initChars.length > 0) {
+      const words = headlineRef.current?.querySelectorAll(".hero-word");
+      if (words && words.length > 0) {
         initTl.fromTo(
-          initChars,
-          { opacity: 0, y: 4 },
+          words,
+          { opacity: 0, y: 35, rotateX: -20 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.3,
-            stagger: { amount: 0.8 },
-            ease: "power1.out",
+            rotateX: 0,
+            duration: 0.9,
+            stagger: 0.05,
           },
           "-=0.6"
         );
       }
 
       initTl.fromTo(
-        scrollCueRef.current,
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power2.out",
-        },
+        ctaRef.current,
+        { opacity: 0, y: 25 },
+        { opacity: 1, y: 0, duration: 0.8 },
         "-=0.5"
       );
 
       initTl.fromTo(
-        engineerContainerRef.current,
-        { opacity: 0, x: 25 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 1.0,
-          ease: "power3.out",
-        },
+        terminalRef.current,
+        { opacity: 0, y: 30, scale: 0.97 },
+        { opacity: 1, y: 0, scale: 1, duration: 1.0 },
+        "-=0.7"
+      );
+
+      initTl.fromTo(
+        scrollCueRef.current,
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.8 },
         "-=0.6"
       );
 
-      // Continuous bouncing cue animation (registered in context for automatic cleanup)
-      gsap.fromTo(
-        scrollCueRef.current,
-        { y: 0 },
-        {
-          y: 6,
+      if (scrollCueArrowRef.current) {
+        gsap.to(scrollCueArrowRef.current, {
+          y: 5,
           duration: 1.2,
           repeat: -1,
           yoyo: true,
-          ease: "power1.inOut",
-          delay: 1.2,
-        }
-      );
-
-      // 2. Timeline Scroll-Driven Pinning & Slides Reveal
-      const scrollTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "+=200%", // Scroll distance (200% of viewport height)
-          scrub: 1, // Smooth scrub tracking
-          pin: stickyRef.current || true, // Pin inner container to prevent React removeChild unmount crashes
-          anticipatePin: 1,
-          onUpdate: (self) => {
-            // Update scroll label based on scroll progress
-            if (scrollLabelRef.current) {
-              const progress = self.progress;
-              if (progress < 0.5) {
-                scrollLabelRef.current.innerText = "Scroll to explore (1/2)";
-              } else {
-                scrollLabelRef.current.innerText = "Revealed. Scroll down (2/2)";
-              }
-            }
-          }
-        },
-      });
-
-      // Orange Overlay slides/reveals from top-right to cover background (Border Radius 0)
-      scrollTl.fromTo(
-        orangeScreenRef.current,
-        {
-          xPercent: 100,
-          yPercent: -100,
-          opacity: 0.15,
-        },
-        {
-          xPercent: 0,
-          yPercent: 0,
-          opacity: 0.25, // Soft overlay on top of black background & grayscale image
-          duration: 2.6, // spans across slide transitions (1.3 * 2)
-          ease: "none",
-        },
-        0 // starts immediately on scrub start
-      );
-
-      // Slide 1 Out: typewrite out (backspace)
-      const s1Chars = slide1Ref.current?.querySelectorAll(".slide1-char");
-      if (s1Chars && s1Chars.length > 0) {
-        scrollTl.to(s1Chars, {
-          opacity: 0,
-          y: -4,
-          stagger: { amount: 1.0, from: "end" },
-          duration: 0.2,
-          ease: "power1.inOut",
-        }, 0);
-      }
-
-      // Slide 2 Visibility
-      scrollTl.fromTo(
-        slide2Ref.current,
-        { visibility: "hidden" },
-        { visibility: "visible", duration: 0.01 },
-        1.3
-      );
-
-      // Slide 2 In: typewrite in
-      const s2Chars = slide2Ref.current?.querySelectorAll(".slide2-char");
-      if (s2Chars && s2Chars.length > 0) {
-        scrollTl.fromTo(
-          s2Chars,
-          { opacity: 0, y: 4 },
-          {
-            opacity: 1,
-            y: 0,
-            stagger: { amount: 1.0 },
-            duration: 0.2,
-            ease: "power1.out",
-          },
-          1.3
-        );
-      }
-
-      // Sentence 1 letters reveal (Slide 1 phase)
-      const s1Letters = sentence1Ref.current?.querySelectorAll(".reveal-char");
-      if (s1Letters && s1Letters.length > 0) {
-        scrollTl.fromTo(
-          s1Letters,
-          { opacity: 0.08, y: 2 },
-          {
-            opacity: 1,
-            y: 0,
-            stagger: { amount: 0.8 },
-            duration: 0.2,
-            ease: "power1.out",
-          },
-          0.2
-        );
-      }
-
-      // Sentence 2 letters reveal (Slide 2 phase)
-      const s2Letters = sentence2Ref.current?.querySelectorAll(".reveal-char");
-      if (s2Letters && s2Letters.length > 0) {
-        scrollTl.fromTo(
-          s2Letters,
-          { opacity: 0.08, y: 2 },
-          {
-            opacity: 1,
-            y: 0,
-            stagger: { amount: 0.8 },
-            duration: 0.2,
-            ease: "power1.out",
-          },
-          1.4
-        );
+          ease: "sine.inOut",
+          force3D: true,
+        });
       }
     }, containerRef);
 
-    // Mouse-following magnifying glass for the orange text stamp (desktop only)
-    const isTouch = window.matchMedia("(pointer: coarse)").matches;
-    let removeEngineerMouseListeners: (() => void) | undefined;
-
-    if (!isTouch) {
-      const container = engineerContainerRef.current;
-      const lensRing = engineerLensRingRef.current;
-      const revealText = engineerRevealTextRef.current;
-      const standardText = engineerStandardTextRef.current;
-
-      if (container && lensRing && revealText && standardText) {
-        const onMouseMove = (e: MouseEvent) => {
-          const rect = container.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-
-          gsap.to(lensRing, {
-            left: x,
-            top: y,
-            duration: 0.1,
-            ease: "power2.out",
-            overwrite: "auto",
-          });
-
-          // Reveal secret text inside the lens
-          revealText.style.clipPath = `circle(80px at ${x}px ${y}px)`;
-          revealText.style.setProperty("-webkit-clip-path", `circle(80px at ${x}px ${y}px)`);
-
-          // Hide standard text inside the lens
-          standardText.style.setProperty("mask-image", `radial-gradient(circle 80px at ${x}px ${y}px, transparent 80px, black 81px)`);
-          standardText.style.setProperty("-webkit-mask-image", `radial-gradient(circle 80px at ${x}px ${y}px, transparent 80px, black 81px)`);
-        };
-
-        const onMouseEnter = () => {
-          gsap.to(lensRing, {
-            scale: 1,
-            opacity: 1,
-            duration: 0.3,
-            ease: "power2.out",
-          });
-          gsap.to(revealText, {
-            opacity: 1,
-            duration: 0.3,
-            ease: "power2.out",
-          });
-        };
-
-        const onMouseLeave = () => {
-          gsap.to(lensRing, {
-            scale: 0,
-            opacity: 0,
-            duration: 0.3,
-            ease: "power2.out",
-          });
-          revealText.style.clipPath = `circle(0px at 0px 0px)`;
-          revealText.style.setProperty("-webkit-clip-path", "circle(0px at 0px 0px)");
-
-          standardText.style.setProperty("mask-image", "none");
-          standardText.style.setProperty("-webkit-mask-image", "none");
-        };
-
-        container.addEventListener("mousemove", onMouseMove);
-        container.addEventListener("mouseenter", onMouseEnter);
-        container.addEventListener("mouseleave", onMouseLeave);
-
-        // Initial state
-        gsap.set(lensRing, { scale: 0, opacity: 0 });
-        revealText.style.clipPath = `circle(0px at 0px 0px)`;
-        revealText.style.setProperty("-webkit-clip-path", "circle(0px at 0px 0px)");
-        standardText.style.setProperty("mask-image", "none");
-        standardText.style.setProperty("-webkit-mask-image", "none");
-
-        removeEngineerMouseListeners = () => {
-          container.removeEventListener("mousemove", onMouseMove);
-          container.removeEventListener("mouseenter", onMouseEnter);
-          container.removeEventListener("mouseleave", onMouseLeave);
-        };
-      }
-    }
- 
-    return () => {
-      ctx.revert();
-      if (removeEngineerMouseListeners) removeEngineerMouseListeners();
-    };
+    return () => ctx.revert();
   }, []);
 
   const slide1Words = portfolioContent.hero.slides[0].split(" ");
-  const slide2Words = portfolioContent.hero.slides[1].split(" ");
 
-  const sentence1Text = "01 // ARCHITECTURAL PRECISION ENGRAVED INTO EVERY PIXEL";
-  const sentence2Text = "02 // LOW-LATENCY SPEED AND ENGINE ROBUSTNESS";
- 
-  const sentence1Letters = sentence1Text.split("");
-  const sentence2Letters = sentence2Text.split("");
+  const codeSnippets = {
+    arch: `// Full-Stack Architecture Blueprint
+export const systemSpec = {
+  frontend: "Next.js 16 + React 19",
+  styling: "Tailwind CSS v4",
+  animations: "GSAP 3 + ScrollTrigger",
+  backend: "Node.js Microservices",
+  database: "PostgreSQL + Redis Caching",
+  deployment: "Vercel Edge + Docker",
+  uptime: "99.98% High Availability"
+};`,
+    stack: `// Engineering Stack Matrix
+{
+  "core": ["TypeScript", "JavaScript", "Python"],
+  "frontend": ["Next.js", "React", "Tailwind", "GSAP"],
+  "backend": ["Node.js", "Express", "tRPC", "GraphQL"],
+  "data": ["PostgreSQL", "MongoDB", "Redis"],
+  "devops": ["Docker", "GitHub Actions", "Vercel"]
+}`,
+    metrics: `// Live Performance Profiling
+[STATUS: 200 OK] -> Latency: 18ms
+[SEO]: 100/100  | [A11Y]: 100/100
+[PERFORMANCE]: 100/100 | [PRACTICES]: 100/100
+[BUILD]: Zero Layout Shift (CLS: 0.00)
+[MOTION]: 60 FPS Hardware Accelerated`,
+  };
+
+  const copySnippet = () => {
+    navigator.clipboard.writeText(codeSnippets[activeTab]);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
-    // Outer scroll container (height creates scroll-trigger track)
-    <div ref={containerRef} className="relative w-full h-[300vh] bg-[#0A0A0A]">
-      {/* Sticky/Pinned full screen viewport */}
+    <section
+      ref={containerRef}
+      id="hero"
+      aria-label="Hero Section"
+      className="relative w-full min-h-screen pt-24 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-6 md:px-16 flex flex-col justify-between bg-[#FAFAFA] grid-pattern overflow-hidden select-none"
+    >
+      <h1 className="sr-only">Dheeraj Dev — Full-Stack Developer & Systems Architect</h1>
+
+      {/* Decorative ambient gradient spots (pointer-events-none for 0 layout impact) */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[350px] sm:w-[600px] h-[350px] sm:h-[600px] bg-indigo-500/5 blur-[90px] sm:blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-10 right-10 w-[250px] sm:w-[350px] h-[250px] sm:h-[350px] bg-violet-500/5 blur-[70px] sm:blur-[90px] rounded-full pointer-events-none" />
+
+      {/* Top Branding & Availability Badge */}
       <div
-        ref={stickyRef}
-        className="sticky top-0 h-screen h-[100dvh] w-full flex flex-col justify-between px-4 py-12 md:px-8 md:py-16 select-none overflow-hidden"
+        ref={brandRef}
+        className="w-full flex items-center justify-between gap-4 z-10"
       >
-        {/* Background Image & Orange Overlay sliding in from bottom right */}
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <Image
-            src={portfolioContent.hero.backgroundImage}
-            alt="Hero Background Architecture"
-            fill
-            sizes="100vw"
-            className="object-cover opacity-30 filter grayscale contrast-[1.1] brightness-[0.9]"
-            priority
-          />
-          <div
-            ref={orangeScreenRef}
-            className="absolute inset-0 bg-[#FF5A00] mix-blend-color opacity-0"
-          />
-        </div>
-
-        {/* Header Name & Live Status */}
-        <div
-          ref={brandRef}
-          className="flex flex-row items-center justify-between gap-2 w-full z-20"
-        >
-          <span className="text-xl sm:text-2xl md:text-3xl font-serif tracking-tight text-white font-medium hover:text-accent transition-colors duration-300">
-            {portfolioContent.hero.name}
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <span className="px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200/80 text-indigo-700 text-[10px] sm:text-[11px] font-mono tracking-wider uppercase font-semibold">
+            Full-Stack Software Engineer
           </span>
-
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/5 bg-white/[0.02] w-fit">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span className="text-[9px] sm:text-[10px] tracking-wider uppercase font-mono text-zinc-200">
-              {portfolioContent.hero.availability}
-            </span>
-          </div>
+          <span className="hidden sm:inline-block text-slate-400 text-xs font-mono">
+            // React • Next.js • Node • Architecture
+          </span>
         </div>
+      </div>
 
-        {/* Center Slides Container */}
-        <div className="relative grow flex items-center justify-start w-full max-w-none z-10 min-h-[40vh]">
-          {/* Slide 1 */}
-          <div
-            ref={slide1Ref}
-            className="absolute inset-0 flex items-center justify-start w-full"
+      {/* Main Hero Content Grid */}
+      <div className="grow my-8 sm:my-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center z-10">
+        {/* Left Column: Headline & Bio */}
+        <div className="lg:col-span-7 flex flex-col items-start justify-center">
+          <h2
+            ref={headlineRef}
+            className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif text-slate-900 font-light leading-[1.15] tracking-tight mb-4 sm:mb-6"
+            style={{ perspective: "1000px" }}
           >
-            <h1 className="text-[8vw] sm:text-[5vw] md:text-[4vw] lg:text-[3.5vw] font-serif font-light text-zinc-200 leading-[1.12] tracking-tight">
-              {slide1Words.map((word, wIdx) => {
-                const isAccent =
-                  word.toLowerCase().includes("purposeful") ||
-                  word.toLowerCase().includes("fast");
-                const chars = word.split("");
-                return (
-                  <React.Fragment key={wIdx}>
-                    <span className={`inline-block whitespace-nowrap ${isAccent ? "text-accent italic font-normal tracking-wide" : ""}`}>
-                      {chars.map((char, cIdx) => (
-                        <span key={cIdx} className="slide1-char inline-block will-change-transform">
-                          {char}
-                        </span>
-                      ))}
-                    </span>
-                    {wIdx < slide1Words.length - 1 && (
-                      <span className="slide1-char inline-block w-[0.25em]">
-                        {"\u00A0"}
-                      </span>
-                    )}
-                  </React.Fragment>
-                );
-              })}
-            </h1>
-          </div>
+            {slide1Words.map((word, idx) => {
+              const isAccent =
+                word.toLowerCase().includes("purposeful") ||
+                word.toLowerCase().includes("fast");
+              return (
+                <span
+                  key={idx}
+                  className={`hero-word inline-block mr-[0.25em] ${
+                    isAccent ? "text-indigo-600 italic font-normal" : ""
+                  }`}
+                >
+                  {word}
+                </span>
+              );
+            })}
+          </h2>
 
-          {/* Slide 2 */}
-          <div
-            ref={slide2Ref}
-            className="absolute inset-0 flex items-center justify-start w-full invisible"
-          >
-            <h1 className="text-[8vw] sm:text-[5vw] md:text-[4vw] lg:text-[3.5vw] font-serif font-light text-zinc-200 leading-[1.12] tracking-tight">
-              {slide2Words.map((word, wIdx) => {
-                const isAccent =
-                  word.toLowerCase().includes("architectural") ||
-                  word.toLowerCase().includes("restraint") ||
-                  word.toLowerCase().includes("modular");
-                const chars = word.split("");
-                return (
-                  <React.Fragment key={wIdx}>
-                    <span className={`inline-block whitespace-nowrap ${isAccent ? "text-accent italic font-normal tracking-wide" : ""}`}>
-                      {chars.map((char, cIdx) => (
-                        <span key={cIdx} className="slide2-char inline-block will-change-transform opacity-0">
-                          {char}
-                        </span>
-                      ))}
-                    </span>
-                    {wIdx < slide2Words.length - 1 && (
-                      <span className="slide2-char inline-block w-[0.25em] opacity-0">
-                        {"\u00A0"}
-                      </span>
-                    )}
-                  </React.Fragment>
-                );
-              })}
-            </h1>
-          </div>
-
-          {/* Scattered Scroll-Reveal Sentences (hidden sm:block keeps clean layout on mobile) */}
-          <p
-            ref={sentence1Ref}
-            className="absolute top-32 right-4 md:right-12 text-right max-w-50 md:max-w-xs text-[10px] font-bold tracking-[0.25em] text-zinc-200 uppercase select-none hidden sm:block pointer-events-none"
-          >
-            {sentence1Letters.map((char, index) => (
-              <span
-                key={index}
-                className={`reveal-char inline-block will-change-transform ${
-                  char === " " ? "w-[0.25em]" : ""
-                }`}
-              >
-                {char === " " ? "\u00A0" : char}
-              </span>
-            ))}
+          <p className="text-slate-600 text-sm sm:text-base md:text-lg font-light leading-relaxed max-w-xl mb-6 sm:mb-8 font-sans">
+            Specializing in high-performance web applications, scalable API infrastructure, and motion-driven digital products with architectural discipline.
           </p>
 
-          <p
-            ref={sentence2Ref}
-            className="absolute top-[70%] left-4 md:left-16 max-w-50 md:max-w-xs text-[10px] font-bold tracking-[0.25em] text-zinc-200 uppercase select-none hidden sm:block pointer-events-none"
-          >
-            {sentence2Letters.map((char, index) => (
-              <span
-                key={index}
-                className={`reveal-char inline-block will-change-transform ${
-                  char === " " ? "w-[0.25em]" : ""
-                }`}
-              >
-                {char === " " ? "\u00A0" : char}
-              </span>
-            ))}
-          </p>
-        </div>
-
-        {/* Prominent Orange Full-Stack Engineer text to attract attention */}
-        <div
-          ref={engineerContainerRef}
-          className="engineer-lens-container absolute bottom-24 right-4 md:right-12 z-20 text-right md:cursor-none py-4 px-2"
-        >
-          {/* Standard Text Layer */}
-          <div ref={engineerStandardTextRef} className="flex flex-col items-end">
-            <span className="text-xs md:text-sm font-mono tracking-[0.3em] text-[#FF5A00] uppercase font-black block mb-2">
-              Specialization
-            </span>
-            <h2 className="text-2xl xs:text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-black italic text-[#FF5A00] tracking-tight drop-shadow-[0_0_35px_rgba(255,90,0,0.45)] leading-none whitespace-nowrap">
-              Full-Stack Engineer
-            </h2>
-          </div>
-
-          {/* Secret Text Layer (revealed via clip-path) */}
+          {/* Action CTAs */}
           <div
-            ref={engineerRevealTextRef}
-            className="absolute top-4 left-0 right-2 hidden md:flex flex-col items-end select-none pointer-events-none transition-opacity duration-300"
+            ref={ctaRef}
+            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 w-full sm:w-auto"
           >
-            <span className="text-xs md:text-sm font-mono tracking-[0.3em] text-white uppercase font-black block mb-2">
-              Specialization
-            </span>
-            <h2 className="text-2xl xs:text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-black italic text-white tracking-tight drop-shadow-[0_0_35px_rgba(255,255,255,0.45)] leading-none whitespace-nowrap">
-              Systems Architect
-            </h2>
-          </div>
-
-          {/* Magnifying Glass Lens Ring */}
-          <div
-            ref={engineerLensRingRef}
-            className="hidden md:block pointer-events-none absolute h-[160px] w-[160px] -ml-[80px] -mt-[80px] rounded-full border border-white bg-white/5 backdrop-blur-[1px] shadow-[0_0_25px_rgba(255,255,255,0.18),inset_0_0_20px_rgba(255,255,255,0.12)] z-10"
-          />
-        </div>
-
-        {/* Footer Scroll Indicator */}
-        <div
-          ref={scrollCueRef}
-          className="flex flex-col items-center sm:flex-row sm:items-center justify-center sm:justify-between gap-4 sm:gap-6 w-full text-zinc-200 text-xs font-mono tracking-widest uppercase border-t border-white/5 pt-8 z-20"
-        >
-          <span className="font-light hidden sm:inline">Full-Stack Engineer</span>
-
-          {/* Scroll cue with status indicators */}
-          <div className="flex items-center gap-3">
-            <span ref={scrollLabelRef}>Scroll to explore (1/2)</span>
-            <div className="flex items-center justify-center h-8 w-8 rounded-full border border-accent/20 text-accent">
+            <a
+              href="#work"
+              className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-600 text-white font-medium text-sm tracking-wide shadow-md hover:bg-indigo-700 hover:shadow-indigo-500/20 transition-all duration-300 w-full sm:w-auto"
+            >
+              <span>Explore Selected Work</span>
               <ArrowDown className="h-4 w-4" />
+            </a>
+
+            <a
+              href="#contact"
+              className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white border border-slate-200 text-slate-800 font-medium text-sm tracking-wide shadow-sm hover:border-slate-300 hover:bg-slate-50 transition-all duration-300 w-full sm:w-auto"
+            >
+              <span>Get in Touch</span>
+            </a>
+          </div>
+        </div>
+
+        {/* Right Column: Mobile-Optimized Full-Stack Terminal */}
+        <div
+          ref={terminalRef}
+          className="lg:col-span-5 w-full bg-slate-900 text-slate-100 rounded-2xl border border-slate-800 shadow-xl sm:shadow-2xl overflow-hidden font-mono text-xs"
+        >
+          {/* Terminal Window Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3.5 py-2.5 sm:px-4 sm:py-3 bg-slate-950 border-b border-slate-800">
+            <div className="flex items-center justify-between w-full sm:w-auto">
+              <div className="flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-rose-500/80 inline-block" />
+                <span className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-amber-500/80 inline-block" />
+                <span className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-emerald-500/80 inline-block" />
+                <span className="ml-2 text-slate-400 text-[10px] sm:text-[11px] font-mono tracking-tight truncate max-w-[130px] sm:max-w-none">
+                  dheeraj@fullstack: ~
+                </span>
+              </div>
+            </div>
+
+            {/* Touch-Optimized Tab Controls */}
+            <div className="flex items-center justify-stretch sm:justify-start gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-[10px] sm:text-[11px] w-full sm:w-auto">
+              <button
+                onClick={() => setActiveTab("arch")}
+                className={`flex-1 sm:flex-none px-2.5 py-1.5 rounded transition-colors text-center font-mono ${
+                  activeTab === "arch"
+                    ? "bg-indigo-600 text-white font-semibold shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                Arch.ts
+              </button>
+              <button
+                onClick={() => setActiveTab("stack")}
+                className={`flex-1 sm:flex-none px-2.5 py-1.5 rounded transition-colors text-center font-mono ${
+                  activeTab === "stack"
+                    ? "bg-indigo-600 text-white font-semibold shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                Stack.json
+              </button>
+              <button
+                onClick={() => setActiveTab("metrics")}
+                className={`flex-1 sm:flex-none px-2.5 py-1.5 rounded transition-colors text-center font-mono ${
+                  activeTab === "metrics"
+                    ? "bg-indigo-600 text-white font-semibold shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                Metrics.sh
+              </button>
             </div>
           </div>
 
-          <span className="font-light hidden sm:inline">Based remote / Worldwide</span>
+          {/* Terminal Body */}
+          <div className="p-4 sm:p-5 bg-slate-900/90 leading-relaxed overflow-x-auto min-h-[190px] sm:min-h-[220px] flex flex-col justify-between">
+            <pre className="text-slate-300 font-mono text-[11px] sm:text-xs whitespace-pre-wrap break-words sm:break-normal">
+              {codeSnippets[activeTab]}
+            </pre>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 pt-3.5 mt-3 border-t border-slate-800 text-[10px] sm:text-[11px] text-slate-400">
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <span className="font-mono text-slate-300">System Ready • Production Mode</span>
+              </div>
+
+              <button
+                onClick={copySnippet}
+                aria-label="Copy Snippet"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800/80 sm:bg-transparent text-slate-300 hover:text-indigo-400 transition-colors w-full sm:w-auto justify-center sm:justify-start"
+              >
+                {copied ? (
+                  <>
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                    <span className="text-emerald-400 font-semibold font-mono">Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Code2 className="h-3.5 w-3.5" />
+                    <span className="font-mono">Copy Snippet</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Footer Scroll Cue */}
+      <div
+        ref={scrollCueRef}
+        className="w-full flex items-center justify-between pt-4 sm:pt-6 border-t border-slate-200 text-slate-500 text-[10px] sm:text-xs font-mono tracking-wider uppercase z-10"
+      >
+        <span className="hidden sm:inline">Engineering Discipline & Motion</span>
+        
+        {/* Scroll Cue with isolated arrow target for infinite floating loop */}
+        <div className="flex items-center gap-2 text-indigo-600">
+          <span>Scroll to explore projects</span>
+          <div ref={scrollCueArrowRef}>
+            <ArrowDown className="h-3.5 w-3.5" />
+          </div>
+        </div>
+
+        <span className="hidden sm:inline">Remote / Worldwide</span>
+      </div>
+    </section>
   );
 }

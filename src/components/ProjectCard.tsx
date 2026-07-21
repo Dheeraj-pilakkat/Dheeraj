@@ -25,17 +25,16 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     const card = cardRef.current;
     if (!card) return;
 
-    // Wrap ScrollTrigger in gsap.context for proper cleanup
     const ctx = gsap.context(() => {
       if (imageRef.current && containerRef.current) {
         gsap.fromTo(
           imageRef.current,
           { 
-            yPercent: -8, 
-            scale: 1.15 
+            yPercent: -6, 
+            scale: 1.12 
           },
           {
-            yPercent: 8,
+            yPercent: 6,
             scale: 1.02,
             ease: "none",
             scrollTrigger: {
@@ -49,7 +48,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       }
     }, containerRef);
 
-    // 2. 3D Tilt Effect on hover
+    // 3D Tilt Effect on hover (desktop only)
     const onMouseMove = (e: MouseEvent) => {
       const rect = card.getBoundingClientRect();
       const width = rect.width;
@@ -58,8 +57,8 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       const relX = (e.clientX - rect.left) / width - 0.5;
       const relY = (e.clientY - rect.top) / height - 0.5;
       
-      const tiltX = -relY * 8;
-      const tiltY = relX * 8;
+      const tiltX = -relY * 6;
+      const tiltY = relX * 6;
 
       gsap.to(card, {
         rotateX: tiltX,
@@ -73,8 +72,8 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
       if (imageRef.current) {
         gsap.to(imageRef.current, {
-          x: relX * 12,
-          y: relY * 12,
+          x: relX * 10,
+          y: relY * 10,
           duration: 0.4,
           ease: "power2.out",
           overwrite: "auto",
@@ -121,47 +120,52 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   return (
     <div
       ref={cardRef}
-      className="project-card-interactive group relative flex flex-col w-full bg-[#1C1C1C] border border-white/5 rounded-2xl overflow-hidden p-4 md:p-6 transition-all duration-500 hover:border-accent/30 hover:bg-[#222] will-change-transform"
+      className="project-card-interactive group relative flex flex-col w-full bg-white border border-slate-200/90 rounded-2xl overflow-hidden p-5 md:p-6 shadow-sm transition-all duration-500 hover:shadow-xl hover:border-indigo-500/40 will-change-transform"
       style={{ transformStyle: "preserve-3d" }}
     >
-      {/* Visual background gloss highlight */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.02] to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+      {/* Subtle hover gradient highlight */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/5 via-transparent to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
       
       {/* Image Container with Parallax */}
       <div
         ref={containerRef}
-        className="relative aspect-[3/2] w-full overflow-hidden rounded-xl bg-zinc-900 border border-white/5"
+        className="relative aspect-[3/2] w-full overflow-hidden rounded-xl bg-slate-100 border border-slate-200/60"
       >
         <Image
           ref={imageRef}
           src={project.image}
-          alt={project.title}
+          alt={`Screenshot of project ${project.title}`}
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
-          className="object-cover transition-transform duration-100 will-change-transform select-none filter brightness-[0.85] contrast-[1.05] group-hover:brightness-100 transition-[filter] duration-500"
+          className="object-cover transition-transform duration-100 will-change-transform select-none filter contrast-[1.02] group-hover:scale-105 transition-all duration-700"
           loading="lazy"
         />
         
         {/* Project Year Tag */}
-        <div className="absolute top-4 right-4 z-10 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] tracking-widest text-accent font-mono">
+        <div className="absolute top-4 right-4 z-10 px-3 py-1 rounded-full bg-white/90 backdrop-blur-md border border-slate-200 text-indigo-600 font-mono text-[11px] font-semibold tracking-wider shadow-sm">
           {project.year}
         </div>
       </div>
 
       {/* Content Details */}
-      <div className="flex flex-col flex-1 mt-6" style={{ transform: "translateZ(30px)" }}>
+      <div className="flex flex-col flex-1 mt-6" style={{ transform: "translateZ(20px)" }}>
         <div className="flex items-start justify-between gap-4">
-          <h3 className="text-2xl font-serif font-light text-zinc-200 tracking-tight group-hover:text-accent transition-colors duration-300">
+          <h3 className="text-2xl md:text-3xl font-serif font-light text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors duration-300">
             {project.title}
           </h3>
-          <div className="flex items-center justify-center h-10 w-10 rounded-full border border-white/10 bg-white/[0.02] text-zinc-400 group-hover:text-accent group-hover:border-accent/40 group-hover:bg-accent/10 transition-all duration-300">
-          <Link href={project.link} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center h-full w-full">
+
+          <Link
+            href={project.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center h-10 w-10 rounded-full border border-slate-200 bg-slate-50 text-slate-600 group-hover:text-indigo-600 group-hover:border-indigo-300 group-hover:bg-indigo-50 transition-all duration-300 shrink-0"
+            aria-label={`View live demo of ${project.title}`}
+          >
             <ArrowUpRight className="h-5 w-5 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
           </Link>
-          </div>
         </div>
 
-        <p className="mt-3 text-sm font-light leading-relaxed text-zinc-400 font-sans tracking-wide">
+        <p className="mt-3 text-sm md:text-base font-light leading-relaxed text-slate-600 font-sans tracking-wide">
           {project.description}
         </p>
 
@@ -170,7 +174,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           {project.tags.map((tag) => (
             <span
               key={tag}
-              className="px-2.5 py-1 rounded bg-white/[0.03] border border-white/5 text-[10px] font-mono tracking-wider text-zinc-400"
+              className="px-3 py-1 rounded-full bg-slate-100 border border-slate-200/80 text-[11px] font-mono tracking-wide text-slate-700"
             >
               {tag}
             </span>

@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import gsap from "gsap";
 
 interface MarqueeProps {
   items: string[];
@@ -7,38 +8,65 @@ interface MarqueeProps {
   reverse?: boolean;
 }
 
-export default function Marquee({ items, speed = 20, reverse = false }: MarqueeProps) {
-  // Duplicate items twice to ensure continuous smooth infinite scrolling
+export default function Marquee({ items, speed = 25, reverse = false }: MarqueeProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  // Quadruple items to ensure a seamless infinite seamless loop
   const marqueeItems = [...items, ...items, ...items, ...items];
 
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+
+    // Enforce GSAP ticker synchronization (matches Lenis RAF ticker rate for 0 judder)
+    const tween = gsap.to(track, {
+      xPercent: reverse ? 50 : -50,
+      ease: "none",
+      duration: speed,
+      repeat: -1,
+      force3D: true,
+    });
+
+    const onMouseEnter = () => tween.pause();
+    const onMouseLeave = () => tween.play();
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener("mouseenter", onMouseEnter);
+      container.addEventListener("mouseleave", onMouseLeave);
+    }
+
+    return () => {
+      tween.kill();
+      if (container) {
+        container.removeEventListener("mouseenter", onMouseEnter);
+        container.removeEventListener("mouseleave", onMouseLeave);
+      }
+    };
+  }, [speed, reverse]);
+
   return (
-    <div className="relative w-full overflow-hidden py-6 border-y border-white/5 bg-white/[0.01] backdrop-blur-sm">
+    <div
+      ref={containerRef}
+      className="relative w-full overflow-hidden py-5 border-y border-slate-200 bg-slate-50/80 backdrop-blur-sm select-none"
+    >
       <div 
-        className="flex w-max items-center gap-8 md:gap-16 whitespace-nowrap hover:[animation-play-state:paused]"
-        style={{
-          animation: `marquee ${speed}s linear infinite ${reverse ? "reverse" : "normal"}`,
-        }}
+        ref={trackRef}
+        className="flex w-max items-center gap-8 md:gap-16 whitespace-nowrap will-change-transform"
       >
         {marqueeItems.map((item, idx) => (
           <div key={idx} className="flex items-center gap-4 md:gap-8">
-            <span className="text-3xl md:text-5xl font-serif font-light text-zinc-100 tracking-tight">
+            <span className="text-2xl md:text-4xl font-serif font-light text-slate-800 tracking-tight">
               {item}
             </span>
-            <span className="h-2 w-2 rounded-full bg-accent opacity-50" />
+            <span className="h-2 w-2 rounded-full bg-indigo-600 opacity-60 shrink-0" />
           </div>
         ))}
       </div>
-
-      <style jsx global>{`
-        @keyframes marquee {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-      `}</style>
     </div>
   );
 }

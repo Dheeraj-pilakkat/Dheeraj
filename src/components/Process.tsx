@@ -16,7 +16,6 @@ export default function Process() {
     if (prefersReduced) return;
 
     const ctx = gsap.context(() => {
-      // Animate line loader across steps
       gsap.fromTo(
         lineRef.current,
         { scaleX: 0, transformOrigin: "left center" },
@@ -31,7 +30,6 @@ export default function Process() {
         }
       );
 
-      // Fade-reveal each step
       gsap.fromTo(
         ".process-step-item",
         { opacity: 0, y: 30 },
@@ -53,39 +51,41 @@ export default function Process() {
   }, []);
 
   return (
-    <section id="process" ref={containerRef} className="py-10 md:py-16 w-full">
+    <section
+      id="process"
+      aria-label="Development Process"
+      ref={containerRef}
+      className="py-16 md:py-24 w-full bg-[#FAFAFA]"
+    >
       <div className="max-w-7xl mx-auto px-6 md:px-16 w-full relative">
         <SectionHeading
           number="03 // Methodology"
-          title="Development Process"
-          subtitle="A systematic, milestone-driven approach engineered to ensure optimal performance, communication, and clean delivery."
+          heading="Development Process"
+          subtitle="A systematic, milestone-driven workflow engineered to ensure performance, communication, and flawless delivery."
         />
 
-        <div className="relative mt-8 md:mt-12">
-          {/* Continuous timeline connector line (desktop only) */}
+        <div className="relative mt-10 md:mt-16">
+          <div className="hidden md:block absolute top-[32px] left-0 right-0 h-[2px] bg-slate-200" />
           <div
             ref={lineRef}
-            className="hidden md:block absolute top-[32px] left-0 right-0 h-[1px] bg-white/10"
+            className="hidden md:block absolute top-[32px] left-0 right-0 h-[2px] bg-indigo-600 z-0"
           />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 lg:gap-10">
             {portfolioContent.process.map((item, index) => (
               <div
                 key={index}
-                className="process-step-item relative flex flex-col items-start group"
+                className="process-step-item relative flex flex-col items-start group z-10"
               >
-                {/* Step indicator circle */}
-                <div className="flex items-center justify-center h-16 w-16 rounded-full border border-white/10 bg-[#0a0a0a] text-accent text-base font-mono tracking-widest mb-4 group-hover:border-accent/50 group-hover:bg-accent/5 transition-all duration-500 z-10">
+                <div className="flex items-center justify-center h-16 w-16 rounded-full border border-slate-200 bg-white text-indigo-600 font-mono font-semibold text-base tracking-widest mb-6 shadow-sm group-hover:border-indigo-500 group-hover:bg-indigo-50 transition-all duration-500">
                   {item.step}
                 </div>
 
-                {/* Title */}
-                <h3 className="text-2xl md:text-3xl font-serif text-zinc-200 mb-3 tracking-tight group-hover:text-accent transition-colors duration-300">
+                <h3 className="text-2xl md:text-3xl font-serif text-slate-900 mb-3 tracking-tight group-hover:text-indigo-600 transition-colors duration-300">
                   {item.title}
                 </h3>
 
-                {/* Description */}
-                <p className="text-base md:text-lg font-light leading-relaxed text-zinc-400 font-sans tracking-wide max-w-xs">
+                <p className="text-base font-light leading-relaxed text-slate-600 font-sans tracking-wide max-w-xs">
                   {item.description}
                 </p>
               </div>
