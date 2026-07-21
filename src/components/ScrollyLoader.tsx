@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { ArrowDown, CheckCircle2, Cpu, Terminal, Sparkles } from "lucide-react";
+import { CheckCircle2, Terminal, Sparkles } from "lucide-react";
 
 const storySteps = [
   {
@@ -40,70 +40,14 @@ export default function ScrollyLoader() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 
-  useEffect(() => {
-    // Check if user already saw intro in current session
-    if (typeof window !== "undefined" && sessionStorage.getItem("scrolly_intro_seen")) {
-      setIsDismissed(true);
-      return;
-    }
-
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReduced) {
-      setIsDismissed(true);
-      return;
-    }
-
-    // Lock body scroll while scrollytelling loader is active
-    document.body.style.overflow = "hidden";
-    if ((window as any).lenis) {
-      (window as any).lenis.stop();
-    }
-
-    const obj = { val: 0 };
-
-    const ctx = gsap.context(() => {
-      // Counter animation from 0 to 100%
-      gsap.to(obj, {
-        val: 100,
-        duration: 3.2,
-        ease: "power2.inOut",
-        onUpdate: () => {
-          const currentVal = Math.round(obj.val);
-          setProgress(currentVal);
-          if (counterRef.current) {
-            counterRef.current.innerText = `${currentVal}%`;
-          }
-
-          // Step index progression based on percentage thresholds
-          if (currentVal < 25) setCurrentStepIdx(0);
-          else if (currentVal < 60) setCurrentStepIdx(1);
-          else if (currentVal < 90) setCurrentStepIdx(2);
-          else setCurrentStepIdx(3);
-        },
-        onComplete: () => {
-          setIsLoaded(true);
-        },
-      });
-    }, containerRef);
-
-    return () => {
-      ctx.revert();
-      document.body.style.overflow = "auto";
-      if ((window as any).lenis) {
-        (window as any).lenis.start();
-      }
-    };
-  }, []);
-
-  const handleEnter = () => {
+  // Curtain slide upward transition function
+  const triggerAutoSlideUp = () => {
     if (!containerRef.current) return;
 
-    // Save session flag
     if (typeof window !== "undefined") {
       sessionStorage.setItem("scrolly_intro_seen", "true");
     }
 
-    // Curtain curtain wipe transition into portfolio
     gsap.to(containerRef.current, {
       yPercent: -100,
       duration: 1.0,
@@ -118,6 +62,64 @@ export default function ScrollyLoader() {
       },
     });
   };
+
+  useEffect(() => {
+    // Check if user already saw intro in current session
+    if (typeof window !== "undefined" && sessionStorage.getItem("scrolly_intro_seen")) {
+      setIsDismissed(true);
+      return;
+    }
+
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) {
+      setIsDismissed(true);
+      return;
+    }
+
+    // Lock body scroll while loader is active
+    document.body.style.overflow = "hidden";
+    if ((window as any).lenis) {
+      (window as any).lenis.stop();
+    }
+
+    const obj = { val: 0 };
+
+    const ctx = gsap.context(() => {
+      // Fast, responsive counter animation from 0 to 100%
+      gsap.to(obj, {
+        val: 100,
+        duration: 2.5,
+        ease: "power2.inOut",
+        onUpdate: () => {
+          const currentVal = Math.round(obj.val);
+          setProgress(currentVal);
+          if (counterRef.current) {
+            counterRef.current.innerText = `${currentVal}%`;
+          }
+
+          if (currentVal < 25) setCurrentStepIdx(0);
+          else if (currentVal < 60) setCurrentStepIdx(1);
+          else if (currentVal < 90) setCurrentStepIdx(2);
+          else setCurrentStepIdx(3);
+        },
+        onComplete: () => {
+          setIsLoaded(true);
+          // Automatically slide upwards after a brief 300ms pause when reaching 100%
+          setTimeout(() => {
+            triggerAutoSlideUp();
+          }, 350);
+        },
+      });
+    }, containerRef);
+
+    return () => {
+      ctx.revert();
+      document.body.style.overflow = "auto";
+      if ((window as any).lenis) {
+        (window as any).lenis.start();
+      }
+    };
+  }, []);
 
   if (isDismissed) return null;
 
@@ -147,8 +149,8 @@ export default function ScrollyLoader() {
         </div>
 
         <div className="flex items-center gap-2 text-xs font-mono text-slate-500">
-          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span>INITIALIZING</span>
+          <span className={`h-2 w-2 rounded-full ${isLoaded ? "bg-emerald-500" : "bg-indigo-600 animate-pulse"}`} />
+          <span>{isLoaded ? "SYSTEM READY" : "INITIALIZING"}</span>
         </div>
       </div>
 
@@ -181,9 +183,8 @@ export default function ScrollyLoader() {
         </div>
       </div>
 
-      {/* Bottom Progress Bar & Enter Action Button */}
+      {/* Bottom Progress Bar Track */}
       <div className="w-full flex flex-col items-center gap-6 z-10">
-        {/* Animated Progress Bar Track */}
         <div className="w-full max-w-2xl h-1.5 rounded-full bg-slate-200 overflow-hidden relative">
           <div
             ref={progressBarRef}
@@ -192,17 +193,13 @@ export default function ScrollyLoader() {
           />
         </div>
 
-        {/* Enter Action Button or Loading Cue */}
-        <div className="h-14 flex items-center justify-center w-full">
+        {/* Automated Status Indicator */}
+        <div className="h-10 flex items-center justify-center w-full">
           {isLoaded ? (
-            <button
-              onClick={handleEnter}
-              className="group flex items-center gap-3 px-8 py-3.5 rounded-xl bg-indigo-600 text-white font-medium text-sm tracking-wide shadow-lg hover:bg-indigo-700 hover:shadow-indigo-500/25 transition-all duration-300 transform hover:scale-105"
-            >
-              <Sparkles className="h-4 w-4 text-indigo-200" />
-              <span>Enter Experience</span>
-              <ArrowDown className="h-4 w-4 transform group-hover:translate-y-0.5 transition-transform" />
-            </button>
+            <div className="flex items-center gap-2 text-xs font-mono text-emerald-600 uppercase tracking-widest font-semibold">
+              <CheckCircle2 className="h-4 w-4" />
+              <span>Launching Experience...</span>
+            </div>
           ) : (
             <div className="flex items-center gap-2 text-xs font-mono text-slate-400 uppercase tracking-widest">
               <span>Compiling Architecture</span>
